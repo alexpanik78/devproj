@@ -1,0 +1,7 @@
+blogger_blog_homepage:
+    path:     /
+    defaults: { _controller: BloggerBlogBundle:Default:index }
+
+app_bundle_route:
+   path:     /ajax_request
+   defaults: { _controller: BloggerBlogBundle:Ajax:index }

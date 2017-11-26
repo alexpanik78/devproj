@@ -1,0 +1,107 @@
+<!-- app/Resources/views/base.html.twig -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html"; charset=utf-8" />
+    <title>{% block title %}Calculator{% endblock %}</title>
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    {% block stylesheets %}
+        <link href="{{ asset('css/bootstrap.css') }}" type="text/css" rel="stylesheet" />
+        <link href="{{ asset('css/bootstrap-datetimepicker.min.css') }}" type="text/css" rel="stylesheet" />
+        <link href="{{ asset('css/bootstrap-theme.min.css') }}" type="text/css" rel="stylesheet" />
+    {% endblock %}
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+
+</head>
+<body>
+<div class="col-xs-12">
+    <div class="col-xs-6">
+        <form>
+            <div class="form-group">
+                <label for="summField">Cумма кредита</label>
+                <input type="text" class="form-control required float" id="summField" placeholder="Введите сумму">
+            </div>
+            <div class="form-group">
+                <label for="summField">Процент</label>
+                <input type="text" class="form-control required float" id="percField" placeholder="Введите процент">
+            </div>
+            <div class="form-group">
+                <label for="periodField">Срок кредита в месяцах</label>
+                <select class="form-control" id="periodField">
+                    {% for i in 2..24 %}
+                        <option>{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+            <div class="form-group">
+                <label for="firstPayField">Дата первого платежа</label>
+                <div class='input-group date' id='firstPayField'>
+                    <input type='text' readonly class="required form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <input type="button" value="Рассчитать" id="buttonResult" class="btn btn-default" />
+
+        </form>
+    </div>
+    <div class="col-xs-6" id="answer">
+
+    </div>
+</div>{% block javascripts %}
+
+    <script src="{{ asset('js/jquery-3.2.1.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+
+    <script src="{{ asset('js/bootstrap.js') }}"></script>
+    <script src="{{ asset('js/moment-with-locales.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script type="text/javascript">
+        $(function () {
+            var today = new Date(new Date().setDate(new Date().getDate()-1));
+            $('#firstPayField').datetimepicker({
+                locale: 'ru',
+                ignoreReadonly: true,
+                format: 'DD-MM-YYYY',
+            }).data("DateTimePicker").minDate(today);
+            $("#buttonResult").click(function() {
+                $('.float').each(function () {
+                   $(this).val(parseFloat($(this).val()))
+                    if ($(this).val()<1 || $(this).val() == 'NaN') {
+                        $(this).val('');
+                    }
+                });
+                var ok = 1;
+                $('.required').each(function() {
+                    if (!$(this).val()) {
+                        ok = 0;
+                        $(this).addClass('alert-danger');
+                    } else {
+                        $(this).removeClass('alert-danger');
+                    }
+                });
+                if (ok) {
+                    calculatePays();
+                }
+            });
+        });
+        function calculatePays() {
+            console.log('calculatePays');
+            $.post("{{ (path('app_bundle_route')) }}", { summField: $("#summField").val(),
+                periodField: $("#periodField").val(),
+                percField: $("#percField").val(),
+                firstPayField: $("#firstPayField input").val()})
+                .done(function( data ) {
+                    $('#answer').html(data);
+                });
+
+        }
+    </script>
+{% endblock %}
+</body>
+</html>

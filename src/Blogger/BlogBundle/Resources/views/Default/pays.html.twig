@@ -1,0 +1,30 @@
+<div class="bs-example" data-example-id="simple-table">
+    <table class="table">
+        <caption>Расчет платежей</caption>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Дата платежа</th>
+            <th>Основной долг</th>
+            <th>Проценты</th>
+            <th>Общая сумма</th>
+            <th>Остаток долга</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for pay in pays %}
+        <tr>
+            <th scope="row">{{ pay.m }}</th>
+            <td>{{ pay.date }}</td>
+            <td>{{ pay.osn }}</td>
+            <td>{{ pay.perc }}</td>
+            <td>{{ pay.pay }}</td>
+            <td>{{ pay.ost }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="6">Вид платежа - аннуитетный</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
